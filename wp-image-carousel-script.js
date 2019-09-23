@@ -1,42 +1,32 @@
 (function(blocks) {
-  wp.blocks.registerBlockType('wp-image-carousel-plugin/wp-image-carousel-plugin', {
+  blocks.registerBlockType('wp-image-carousel-plugin/wp-image-carousel-plugin', {
     title: 'Custom Image Carousel',
     icon: 'format-gallery',
     category: 'common',
     attributes: {
-      img1Index: { default: [0] },
-      img2Index: { default: [1] },
-      imageUrls: {
-        type: 'array',
-        default: []
-      },
-      imageCaptions: {
-        type: 'array',
-        default: []
-      },
-      autoScroll: {
-        type: 'boolean'
-      },
-      autoScrollTime: {
-        type: 'number'
-      },
-      wpImageCarouselData: {
-        type: 'object'
-      }
+      img1Index: { type: 'number', default: 0 },
+      img2Index: { type: 'number', default: 1 },
+      imageUrls: { type: 'array', default: [] },
+      imageCaptions: { type: 'array', default: [] },
+      autoScroll: { type: 'boolean' },
+      autoScrollTime: { type: 'number'}
     },
     edit: function(props) {
-      function stepForward() {
+      function stepForward(event) {
         props.setAttributes({
-          img1Index: [(props.attributes.img1Index[0] + 1) % props.attributes.imageUrls.length],
-          img2Index: [(props.attributes.img2Index[0] + 1) % props.attributes.imageUrls.length]
-        })
+          img1Index: (props.attributes.img1Index + 1) % props.attributes.imageUrls.length,
+          img2Index: (props.attributes.img2Index + 1) % props.attributes.imageUrls.length
+        });
+        //console.log(props.attributes);
       }
-      function stepBack() {
+      function stepBack(event) {
         props.setAttributes({
-          img1Index: [(props.attributes.img1Index[0] + (props.attributes.imageUrls.length + 1)) % props.attributes.imageUrls.length],
-          img2Index: [(props.attributes.img2Index[0] + (props.attributes.imageUrls.length + 1)) % props.attributes.imageUrls.length]
-        })
+          img1Index: (props.attributes.img1Index + (props.attributes.imageUrls.length + 1)) % props.attributes.imageUrls.length,
+          img2Index: (props.attributes.img2Index + (props.attributes.imageUrls.length + 1)) % props.attributes.imageUrls.length
+        });
+        //console.log(props.attributes);
       }
+      setIndex = (i) => console.log(i);
       function openMediaModal() {
         var frame = new wp.media.view.MediaFrame.Select({
           title: 'Select images for this gallery',
@@ -60,10 +50,10 @@
           });
           props.setAttributes({
             imageUrls: ids,
-            img1Index: [0],
-            img2Index: [1],
+            img1Index: 0,
+            img2Index: 1,
           });
-          console.log(props.attributes);
+          //console.log(props.attributes);
         });
         frame.open();
       }
@@ -74,30 +64,54 @@
           props.attributes.imageUrls.length &&
           React.createElement(
             "div",
-            {class: "wp-img-carousel-container-outer"},
+            {
+              class: "wp-img-carousel-container"
+            },
+            React.createElement("img", {
+              class: "wp-img-carousel-img",
+              src: props.attributes.imageUrls[props.attributes.img1Index]
+            }),
+            React.createElement("img", {
+              class: "wp-img-carousel-img",
+              src: props.attributes.imageUrls[props.attributes.img2Index]
+            }),
             React.createElement(
-              "div",
-              {class: "wp-img-carousel-container" },
-              React.createElement("img", {
-                class: "wp-img-carousel-img",
-                src: props.attributes.imageUrls[props.attributes.img1Index[0]]
-              }),
-              React.createElement("img", {
-                class: "wp-img-carousel-img",
-                src: props.attributes.imageUrls[props.attributes.img2Index[0]]
-              }),
+              "span",
+              {
+                id: "wp-img-carousel-left-arrow",
+                onClick: stepBack
+              },
               React.createElement("span", {
-                  id: "wp-img-carousel-left-arrow",
-                  onClick: stepBack
-                },
-                React.createElement("span", {class:"dashicons dashicons-arrow-left-alt2"})
-              ),
+                class: "dashicons dashicons-arrow-left-alt2"
+              })
+            ),
+            React.createElement(
+              "span",
+              {
+                id: "wp-img-carousel-right-arrow",
+                onClick: stepForward
+              },
               React.createElement("span", {
-                  id: "wp-img-carousel-right-arrow",
-                  onClick: stepForward
-                },
-                React.createElement("span", {class:"dashicons dashicons-arrow-right-alt2"})
-              )
+                class: "dashicons dashicons-arrow-right-alt2"
+              })
+            ),
+            React.createElement(
+              "span",
+              {
+                id: "wp-img-carousel-dots-container"
+              },
+              props.attributes.imageUrls.map(function(obj, i) {
+                return React.createElement("div", {
+                  class:
+                    "wp-img-carousel-dot" +
+                    (i == props.attributes.img1Index
+                      ? " wp-img-carousel-dot-active"
+                      : ""),
+                  onClick: function onClick() {
+                    return setIndex(i);
+                  }
+                });
+              })
             )
           ),
         React.createElement(
