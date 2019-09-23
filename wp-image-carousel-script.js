@@ -4,6 +4,7 @@
     icon: 'format-gallery',
     category: 'common',
     attributes: {
+      _imgPairity: { type: 'boolean', default: false },
       img1Index: { type: 'number', default: 0 },
       img2Index: { type: 'number', default: 1 },
       imageUrls: { type: 'array', default: [] },
@@ -12,21 +13,38 @@
       autoScrollTime: { type: 'number'}
     },
     edit: function(props) {
-      function stepForward(event) {
-        props.setAttributes({
-          img1Index: (props.attributes.img1Index + 1) % props.attributes.imageUrls.length,
-          img2Index: (props.attributes.img2Index + 1) % props.attributes.imageUrls.length
-        });
-        //console.log(props.attributes);
+
+      let stepForward = (event) => {
+        if (props.attributes.imageUrls.length > 1) {
+          if (!props.attributes._imgPairity) {
+            props.setAttributes({
+              img2Index: (props.attributes.img1Index + 1) % props.attributes.imageUrls.length,
+              _imgPairity: !props.attributes._imgPairity
+            });
+          } else {
+            props.setAttributes({
+              img1Index: (props.attributes.img2Index + 1) % props.attributes.imageUrls.length,
+              _imgPairity: !props.attributes._imgPairity
+            });
+          }
+        }
       }
-      function stepBack(event) {
-        props.setAttributes({
-          img1Index: (props.attributes.img1Index + (props.attributes.imageUrls.length + 1)) % props.attributes.imageUrls.length,
-          img2Index: (props.attributes.img2Index + (props.attributes.imageUrls.length + 1)) % props.attributes.imageUrls.length
-        });
-        //console.log(props.attributes);
+      let stepBack = (event) => {
+        if (props.attributes.imageUrls.length > 1) {
+          if (!props.attributes._imgPairity) {
+            props.setAttributes({
+              img2Index: (props.attributes.img1Index + props.attributes.imageUrls.length - 1) % props.attributes.imageUrls.length,
+              _imgPairity: !props.attributes._imgPairity
+            });
+          } else {
+            props.setAttributes({
+              img1Index: (props.attributes.img2Index + props.attributes.imageUrls.length - 1) % props.attributes.imageUrls.length,
+              _imgPairity: !props.attributes._imgPairity
+            });
+          }
+        }
       }
-      setIndex = (i) => console.log(i);
+      let setIndex = (i) => console.log(i);
       function openMediaModal() {
         var frame = new wp.media.view.MediaFrame.Select({
           title: 'Select images for this gallery',
@@ -45,13 +63,14 @@
         frame.on('select', () => {
           let ids = [];
           frame.state().get('selection').each(model => {
-            console.log(model.attributes.url);
+            //console.log(model.attributes.url);
             ids.push(model.attributes.url);
           });
           props.setAttributes({
             imageUrls: ids,
+            _imgPairity: false,
             img1Index: 0,
-            img2Index: 1,
+            img2Index: ids.length? ids.length-1 : 0,
           });
           //console.log(props.attributes);
         });
@@ -68,11 +87,19 @@
               class: "wp-img-carousel-container"
             },
             React.createElement("img", {
-              class: "wp-img-carousel-img",
+              class:
+                "wp-img-carousel-img" +
+                (props.attributes._imgPairity
+                  ? " wp-img-carousel-img-transparent"
+                  : ""),
               src: props.attributes.imageUrls[props.attributes.img1Index]
             }),
             React.createElement("img", {
-              class: "wp-img-carousel-img",
+              class:
+                "wp-img-carousel-img" +
+                (!props.attributes._imgPairity
+                  ? " wp-img-carousel-img-transparent"
+                  : ""),
               src: props.attributes.imageUrls[props.attributes.img2Index]
             }),
             React.createElement(
@@ -104,7 +131,9 @@
                 return React.createElement("div", {
                   class:
                     "wp-img-carousel-dot" +
-                    (i == props.attributes.img1Index
+                    ((i == props.attributes.img1Index &&
+                      !props.attributes._imgPairity) ||
+                    (i == props.attributes.img2Index && props.attributes._imgPairity)
                       ? " wp-img-carousel-dot-active"
                       : ""),
                   onClick: function onClick() {
