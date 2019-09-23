@@ -10,7 +10,9 @@
       imageUrls: { type: 'array', default: [] },
       imageCaptions: { type: 'array', default: [] },
       autoScroll: { type: 'boolean' },
-      autoScrollTime: { type: 'number'}
+      autoScrollTime: { type: 'number'},
+      backgroundColor: { type: 'string', default: '#ffffff' },
+      aspectRatio: { type: 'string', default: ''}
     },
     edit: function(props) {
 
@@ -44,7 +46,23 @@
           }
         }
       }
-      let setIndex = (i) => console.log(i);
+      let setIndex = (i) => {
+        if (props.attributes.imageUrls.length > 1) {
+          if (!((!props.attributes._imgPairity && props.attributes.img1Index === i) || (props.attributes._imgPairity && props.attributes.img2Index === i))) {
+            if (!props.attributes._imgPairity) {
+              props.setAttributes({
+                img2Index: i,
+                _imgPairity: !props.attributes._imgPairity
+              });
+            } else {
+              props.setAttributes({
+                img1Index: i,
+                _imgPairity: !props.attributes._imgPairity
+              });
+            }
+          }
+        }
+      };
       function openMediaModal() {
         var frame = new wp.media.view.MediaFrame.Select({
           title: 'Select images for this gallery',
