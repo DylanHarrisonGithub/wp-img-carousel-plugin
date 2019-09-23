@@ -1,5 +1,5 @@
 .wp-img-carousel-container {
-  background-color: purple !important;
+  background-color: purple;
   width: 100%;
   padding-top: 62.5%/*66.66%/*75%;/*56.25%*/;
   position: relative;
@@ -82,8 +82,8 @@
   margin-right: 5px;
   display: inline-block;
   border-radius: 50%;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   background-color: rgba(255,255,255,.3);
 } .wp-img-carousel-dot:hover {
   cursor: pointer;
