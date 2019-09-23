@@ -1,0 +1,71 @@
+.wp-img-carousel-container {
+  background-color: purple !important;
+  width: 100%;
+  padding-top: 62.5%/*66.66%/*75%;/*56.25%*/;
+  position: relative;
+}
+
+.wp-img-carousel-img {
+  max-height: 100%;  
+  max-width: 100%; 
+  width: auto;
+  height: auto;
+  position: absolute;  
+  top: 0;  
+  bottom: 0;  
+  left: 0;  
+  right: 0;  
+  margin: auto;
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  -o-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out;
+}
+
+.wp-img-carousel-img.wp-img-carousel-img-transparent {
+  opacity: 0;
+}
+
+#wp-img-carousel-left-arrow {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  background-color: rgba(63,63,63,.1);
+  height: 64px;
+  width: 52px;
+  transform: translateY(-50%);
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+} #wp-img-carousel-left-arrow:hover {
+  cursor: pointer;
+  background-color: rgba(0,0,0,.2);
+} #wp-img-carousel-left-arrow span {
+  font-size: 46px;
+  color: rgba(255,255,255,.3);
+  position: absolute;
+  transform: translateY(50%);
+} #wp-img-carousel-left-arrow span:hover {
+  color: rgba(255,255,255,.8);
+}
+
+#wp-img-carousel-right-arrow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  background-color: rgba(63,63,63,.1);
+  height: 64px;
+  width: 52px;
+  transform: translateY(-50%);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+} #wp-img-carousel-right-arrow:hover {
+  cursor: pointer;
+  background-color: rgba(0,0,0,.2);
+} #wp-img-carousel-right-arrow span {
+  font-size: 46px;
+  color: rgba(255,255,255,.3);
+  position: absolute;
+  transform: translate(8px,50%);
+} #wp-img-carousel-right-arrow span:hover {
+  color:rgba(255,255,255,.8);
+}
