@@ -6,10 +6,10 @@
         "padding-top": props.attributes.aspectRatio
       }}>
         <div class="wp-img-carousel-img-urls">
-          {JSON.stringify(props.attributes.imageUrls)}
+          {props.attributes.imageUrls.join()}
         </div>
         <div class="wp-img-carousel-img-captions">
-          {JSON.stringify(props.attributes.imgageCaptions)}
+          {props.attributes.imgageCaptions.join()}
         </div>
         <img class="wp-img-carousel-img" src={props.attributes.imageUrls[0]} />
         <img class="wp-img-carousel-img wp-img-carousel-img-transparent" src={props.attributes.imageUrls[props.attributes.imageUrls.length-1]} />
