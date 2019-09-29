@@ -198,11 +198,6 @@
       );
     },
     save: function(props) {
-      let b = React.createElement("button", {
-        id: "veryspecialbutton",
-        ref: React.createRef()
-      }, "cl0ckme");
-      // how to access b.elementRef? ${b}.addEventListener(...) i swear this worked at some point..
       return React.createElement(
         "div",
         null,
@@ -225,14 +220,14 @@
                 {
                   class: "wp-img-carousel-img-urls"
                 },
-                JSON.stringify(props.attributes.imageUrls)
+                props.attributes.imageUrls.join()
               ),
               React.createElement(
                 "div",
                 {
                   class: "wp-img-carousel-img-captions"
                 },
-                JSON.stringify(props.attributes.imgageCaptions)
+                props.attributes.imgageCaptions.join()
               ),
               React.createElement("img", {
                 class: "wp-img-carousel-img",
@@ -280,7 +275,6 @@
               ),
               React.createElement("script", null, `
                 (function() {
-                  alert('testing');
                   let scripts = document.getElementsByTagName('script');
                   let currentScript = scripts[scripts.length - 1];
                   let props = {
@@ -292,14 +286,28 @@
                     rightArrowElement: null,
                     imgDotElements: null
                   };
-                  currentScript.parentNode.childNodes.forEach(node => {
+                  function setImg(n) {
+                    if (props.imgElement1.classList.contains('wp-img-carousel-img-transparent')) {
+                      props.imgElement1.src = props.imgUrls[n % props.imgUrls.length];
+                    } else {
+                      props.imgElement2.src = props.imgUrls[n % props.imgUrls.length];
+                    }
+                    props.imgElement1.classList.toggle('wp-img-carousel-img-transparent');
+                    props.imgElement2.classList.toggle('wp-img-carousel-img-transparent');
+                
+                    props.imgDotElements.forEach(dot => {
+                      dot.classList.remove('wp-img-carousel-dot-active');
+                    });
+                    props.imgDotElements[n % props.imgUrls.length].classList.add('wp-img-carousel-dot-active');
+                  }
+                  [ ... currentScript.parentNode.children].forEach(node => {
                     // image urls list
                     if (node.classList.contains('wp-img-carousel-img-urls')) {
-                      props.imgUrls = node.innerHTML;
+                      props.imgUrls = node.textContent.split(",");
                     }
                     // image captions list
                     if (node.classList.contains('wp-img-carousel-img-captions')) {
-                      props.imgCaptions = node.innerHTML;
+                      props.imgCaptions = node.textContent.split(",");
                     }
                     // html image elements
                     if (node.classList.contains('wp-img-carousel-img')) {
@@ -313,11 +321,25 @@
                     }
                     // step back button
                     if (node.classList.contains('wp-img-carousel-left-arrow')) {
-                      props.leftArrowElement = node;
+                      props.leftArrowElement = node; 
+                      node.addEventListener('click', () => {
+                        if (props.imgElement1.classList.contains('wp-img-carousel-img-transparent')) {
+                          setImg(props.imgUrls.indexOf(props.imgElement2.src) + props.imgUrls.length -1);
+                        } else {
+                          setImg(props.imgUrls.indexOf(props.imgElement1.src) + props.imgUrls.length -1);
+                        }
+                      });
                     }
                     // step forward button
-                    if (node.classList.contains('wp-img-carousel-left-arrow')) {
+                    if (node.classList.contains('wp-img-carousel-right-arrow')) {
                       props.rightArrowElement = node;
+                      node.addEventListener('click', () => {
+                        if (props.imgElement1.classList.contains('wp-img-carousel-img-transparent')) {
+                          setImg(props.imgUrls.indexOf(props.imgElement2.src) + 1);
+                        } else {
+                          setImg(props.imgUrls.indexOf(props.imgElement1.src) + 1);
+                        }
+                      });
                     }
                     // image dots container
                     if (node.classList.contains('wp-img-carousel-dots-container')) {
@@ -326,13 +348,12 @@
                       node.childNodes.forEach((value, key) => {
                         props.imgDotElements.push(value);
                         value.addEventListener('click', (e) => {
-                  
+                          setImg(key);
                         });
                       });
                     }
                   });
-                  console.log(props);
-                })();
+                })();             
               `)
             )
           )
